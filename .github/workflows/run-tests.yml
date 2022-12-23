@@ -6,17 +6,17 @@ jobs:
   laravel-tests:
 
     runs-on: ubuntu-latest
-      strategy:
-        fail-fast: true
-        matrix:
-          php: [ 8.2, 8.1, 8.0, 7.4 ]
-          laravel: [ 9.*, 8.* ]
-          dependency-version: [ prefer-lowest, prefer-stable ]
-          include:
-            - laravel: 9.*
-              testbench: 7.*
-            - laravel: 8.*
-              testbench: ^6.23
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 8.2, 8.1, 8.0, 7.4 ]
+        laravel: [ 9.*, 8.* ]
+        dependency-version: [ prefer-lowest, prefer-stable ]
+        include:
+          - laravel: 9.*
+            testbench: 7.*
+          - laravel: 8.*
+            testbench: ^6.23
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
