@@ -13,18 +13,18 @@
   },
   "autoload": {
 	"psr-4": {
-	  "Hylk\\ModelLocking\\": "src"
+	  "Hylk\\Locking\\": "src/"
 	}
   },
   "autoload-dev": {
 	"psr-4": {
-	  "Hylk\\ModelLocking\\Tests\\": "tests/"
+	  "Hylk\\Locking\\": "tests/"
 	}
   },
   "extra": {
 	"laravel": {
 	  "providers": [
-		"Hylk\\ModelLocking\\ModelLockingServiceProvider"
+		"Hylk\\Locking\\ModelLockingServiceProvider"
 	  ]
 	}
   },
