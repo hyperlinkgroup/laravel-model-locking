@@ -4,7 +4,8 @@
   "type": "library",
   "license": "MIT",
   "require": {
-	"php": "^8.0"
+	"php": "^8.0",
+    "spatie/temporary-directory": "^2.1"
   },
   "require-dev": {
 	"roave/security-advisories": "dev-latest",
@@ -18,7 +19,7 @@
   },
   "autoload-dev": {
 	"psr-4": {
-	  "Hylk\\Locking\\": "tests/"
+	  "Hylk\\Locking\\Tests\\": "tests/"
 	}
   },
   "extra": {
