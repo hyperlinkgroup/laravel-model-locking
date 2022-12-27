@@ -11,32 +11,9 @@ use Hylk\Locking\Providers\ModelLockingServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\Concerns\CreatesApplication;
-use function Pest\Laravel\actingAs as actingAs;
 
 uses(CreatesApplication::class);
 beforeEach()->createApplication();
-
-it('can extend the blueprint for migrations', function () {
-	app()->register(ModelLockingServiceProvider::class);
-
-	$blueprint = new Blueprint('test');
-	$blueprint->lockfields();
-	expect($blueprint->getAddedColumns())->toHaveCount(2);
-	expect($blueprint->getAddedColumns()[0]->toArray())->toEqual([
-		'type' => 'bigInteger',
-  		'name' => 'locked_by',
-  		'autoIncrement' => false,
-  		'unsigned' => true,
-  		'nullable' => true,
-  		'default' => null,
-	]);
-	expect($blueprint->getAddedColumns()[1]->toArray())->toEqual([
-		'type' => 'timestamp',
-		'name' => 'locked_at',
-		'precision' => 0,
-		'nullable' => true,
-	]);
-});
 
 /**
  * getTestModel
@@ -79,6 +56,40 @@ function getUsers(int $number = 1): Collection
 
 	return $users;
 }
+
+it('can extend the blueprint for migrations', function () {
+	app()->register(ModelLockingServiceProvider::class);
+
+	$blueprint = new Blueprint('test');
+	$blueprint->lockfields();
+	expect($blueprint->getAddedColumns())->toHaveCount(2);
+	expect($blueprint->getAddedColumns()[0]->toArray())->toEqual([
+		'type' => 'bigInteger',
+		'name' => 'locked_by',
+		'autoIncrement' => false,
+		'unsigned' => true,
+		'nullable' => true,
+		'default' => null,
+	]);
+	expect($blueprint->getAddedColumns()[1]->toArray())->toEqual([
+		'type' => 'timestamp',
+		'name' => 'locked_at',
+		'precision' => 0,
+		'nullable' => true,
+	]);
+});
+
+it('can load the config-file', function () {
+	app()->register(ModelLockingServiceProvider::class);
+
+	expect(config('model-locking'))->toEqual([
+		'lock_duration' => 70,
+		'intervals' => [
+			'heartbeat_refresh' => 60,
+			'heartbeat_status' => 15,
+		],
+	]);
+});
 
 it('can lock and unlock a model by a given user', function() {
 	$testModel = getTestModel();

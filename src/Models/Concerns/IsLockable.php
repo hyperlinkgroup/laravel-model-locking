@@ -40,6 +40,9 @@ trait IsLockable
 	 */
 	public function lock(Authenticatable|string|int|null $user = null, bool $save = true): self
 	{
+		// TODO: test if it's locked by ourself then refresh
+		// TODO: test if it's locked, then throw exception
+
 		$userId = $this->lockingUserIdentifier($user);
 		$this->attributes['locked_by'] = $userId;
 		$this->attributes['locked_at'] = Carbon::now();
@@ -117,7 +120,9 @@ trait IsLockable
 	 */
 	public function isLockedBy(Authenticatable|string|int|null $user = null): bool
 	{
+		// TODO: test if it's locked by time
 		$userId = $this->lockingUserIdentifier($user);
+
 		return $this->locked_by === $userId;
 	}
 
