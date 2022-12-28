@@ -2,6 +2,7 @@
 
 namespace Hylk\Locking\Providers;
 
+use Hylk\Locking\Console\Commands\ReleaseExpiredLocks;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\ServiceProvider;
@@ -23,7 +24,9 @@ class ModelLockingServiceProvider extends ServiceProvider
 
 	protected function registerCommands(): void
 	{
-		// currently nil
+		$this->commands([
+			ReleaseExpiredLocks::class,
+		]);
 	}
 
 	protected function registerBlueprintMacro(): void
@@ -33,6 +36,10 @@ class ModelLockingServiceProvider extends ServiceProvider
 				 ->nullable()
 				 ->default(null);
 			$this->timestamp('locked_at')->nullable();
+		});
+
+		Blueprint::macro('dropLockfields', function () {
+			$this->dropColumn('locked_by', 'locked_at');
 		});
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Hylk\Locking\Tests\TestClasses;
+namespace Hylk\Locking\Tests\TestClasses\Models;
 
 use Hylk\Locking\Models\Concerns\IsLockable;
 use Illuminate\Database\Eloquent\Model;
