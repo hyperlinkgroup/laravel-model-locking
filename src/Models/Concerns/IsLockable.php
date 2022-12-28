@@ -4,6 +4,7 @@ namespace Hylk\Locking\Models\Concerns;
 
 use Carbon\Carbon;
 use Hylk\Locking\Exceptions\InvalidUserException;
+use Hylk\Locking\Exceptions\ModelIsLockedException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
@@ -37,14 +38,14 @@ trait IsLockable
 	 *
 	 * @return IsLockable|Model
 	 * @throws InvalidUserException if the user is not valid.
+	 * @throws ModelIsLockedException if the model is already locked.
 	 */
 	public function lock(Authenticatable|string|int|null $user = null, bool $save = true): self
 	{
-		// TODO: test if it's locked by ourself then refresh
-		// TODO: test if it's locked, then throw exception
-
-		$userId = $this->lockingUserIdentifier($user);
-		$this->attributes['locked_by'] = $userId;
+		if ($this->isLocked() && !$this->isLockedBy($user)) {
+			throw new ModelIsLockedException('The model is already locked by another user.');
+		}
+		$this->attributes['locked_by'] = $this->lockingUserIdentifier($user);
 		$this->attributes['locked_at'] = Carbon::now();
 
 		if ($save) $this->save();
@@ -90,60 +91,67 @@ trait IsLockable
 
 	public function getLockedByAttribute(): int|string|null
 	{
-		return $this->attributes['locked_by'] ?? null;
+		return $this->releaseLockIfExpired()->attributes['locked_by'] ?? null;
 	}
 
 	public function getLockedAtAttribute(): Carbon|null
 	{
-		$lockedAt = $this->attributes['locked_at'] ?? null;
+		$lockedAt = $this->releaseLockIfExpired()->attributes['locked_at'] ?? null;
 
 		return $lockedAt ? new Carbon($lockedAt) : null;
 	}
 
 	public function getIsLockedAttribute(): bool
 	{
-		return $this->isLocked();
+		return $this->isLocked(false);
 	}
 
 	public function getIsUnlockedAttribute(): bool
 	{
-		return $this->isUnlocked();
+		return $this->isUnlocked(false);
 	}
 
 	/**
 	 * Returns if the model is locked.
+	 * Releases the lock if the lock is expired.
 	 *
 	 * @param Authenticatable|string|int|null $user null for the current user
+	 * @param bool                            $saveOnRelease
 	 *
 	 * @return bool
 	 * @throws InvalidUserException
 	 */
-	public function isLockedBy(Authenticatable|string|int|null $user = null): bool
+	public function isLockedBy(Authenticatable|string|int|null $user = null, bool $saveOnRelease = false): bool
 	{
-		// TODO: test if it's locked by time
 		$userId = $this->lockingUserIdentifier($user);
 
-		return $this->locked_by === $userId;
+		return $this->releaseLockIfExpired($saveOnRelease)->locked_by === $userId;
 	}
 
 	/**
 	 * Returns if the model is locked.
+	 * Releases the lock if the lock is expired.
+	 *
+	 * @param bool $saveOnRelease
 	 *
 	 * @return bool
 	 */
-	public function isLocked(): bool
+	public function isLocked(bool $saveOnRelease = false): bool
 	{
-		return (bool) $this->locked_by;
+		return (bool) $this->releaseLockIfExpired($saveOnRelease)->locked_by;
 	}
 
 	/**
 	 * Returns if the model is unlocked.
+	 * Releases the lock if the lock is expired.
+	 *
+	 * @param bool $saveOnRelease
 	 *
 	 * @return bool
 	 */
-	public function isUnlocked(): bool
+	public function isUnlocked(bool $saveOnRelease = false): bool
 	{
-		return !$this->isLocked();
+		return !$this->isLocked($saveOnRelease);
 	}
 
 	/**
@@ -164,5 +172,25 @@ trait IsLockable
 		if ($user instanceof Authenticatable) return $user->getAuthIdentifier();
 
 		throw new InvalidUserException('Invalid locking user');
+	}
+
+	/**
+	 * If the lock is expired the model will be unlocked.
+	 *
+	 * @param bool $saveOnRelease
+	 *
+	 * @return IsLockable|Model|self
+	 */
+	protected function releaseLockIfExpired(bool $saveOnRelease = false): self
+	{
+		if (empty($lockedAt = data_get($this->attributes, 'locked_at'))) return $this;
+		// test on expiration
+		$lockedAt = is_string($lockedAt) ? new Carbon($lockedAt) : $lockedAt->copy();
+		$lockedAt->addSeconds(config('model-locking.lock_duration', 60));
+		if ($lockedAt->isPast()) {
+			return $this->unlockForced($saveOnRelease);
+		}
+
+		return $this;
 	}
 }

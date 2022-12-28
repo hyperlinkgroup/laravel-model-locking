@@ -2,10 +2,12 @@
 
 namespace Hylk\Locking\Tests;
 
+use Carbon\Carbon;
 use Hylk\Locking\Exceptions\InvalidUserException;
 use Illuminate\Database\Schema\Blueprint;
 use Hylk\Locking\Providers\ModelLockingServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use function Spatie\PestPluginTestTime\testTime;
 
 it('can extend the blueprint for migrations', function () {
 	app()->register(ModelLockingServiceProvider::class);
@@ -42,6 +44,7 @@ it('can load the config-file', function () {
 });
 
 it('can lock and unlock a model by a given user', function() {
+	app()->register(ModelLockingServiceProvider::class);
 	$testModel = $this->getTestModel();
 	expect($testModel->toArray())->toEqual([
 		'id' => 1,
@@ -64,6 +67,7 @@ it('can lock and unlock a model by a given user', function() {
 });
 
 it('can lock and unlock a model by the current user', function() {
+	app()->register(ModelLockingServiceProvider::class);
 	$testModel = $this->getTestModel();
 
 	Auth::setUser($this->getUsers()->first());
@@ -80,7 +84,27 @@ it('can lock and unlock a model by the current user', function() {
 	expect($testModel->locked_at)->toBeNull();
 });
 
+it('can refresh a lock', function() {
+	app()->register(ModelLockingServiceProvider::class);
+	$testModel = $this->getTestModel();
+
+	Auth::setUser($this->getUsers()->first());
+	$testModel->lock();
+	expect($testModel->isLocked())->toBeTrue();
+	/** @var Carbon $lockedAtFrist */
+	$lockedAtFrist = $testModel->locked_at;
+
+	// advance in time
+	testTime()->addSeconds(10);
+
+	$testModel->lock();
+	/** @var Carbon $lockedAtRefreshed */
+	$lockedAtRefreshed = $testModel->locked_at;
+	expect($lockedAtFrist->isBefore($lockedAtRefreshed))->toBeTrue();
+});
+
 it('cannot unlock a model locked by different user', function() {
+	app()->register(ModelLockingServiceProvider::class);
 	$testModel = $this->getTestModel();
 	$users = $this->getUsers(2);
 
@@ -89,6 +113,7 @@ it('cannot unlock a model locked by different user', function() {
 })->throws(InvalidUserException::class, 'The model is locked by another user.');
 
 it('can force unlock a model locked by a different user', function() {
+	app()->register(ModelLockingServiceProvider::class);
 	$testModel = $this->getTestModel();
 	$user = $this->getUsers()->first();
 
@@ -96,4 +121,44 @@ it('can force unlock a model locked by a different user', function() {
 	$testModel->unlockForced();
 	expect($testModel->locked_by)->toBeNull();
 	expect($testModel->locked_at)->toBeNull();
+});
+
+it ('can unlock a model with an expired lock automatically', function () {
+	app()->register(ModelLockingServiceProvider::class);
+	$testModel = $this->getTestModel();
+	$testModel->lock($this->getUsers()->first());
+
+	$originalPropertyReflection = (new \ReflectionClass($testModel))->getProperty('original');
+	$originalPropertyReflection->setAccessible(true);
+
+	expect($testModel->isLocked())->toBeTrue();
+	$lockedAtValue = data_get($originalPropertyReflection->getValue($testModel->refresh()), 'locked_at');
+	expect($lockedAtValue)->not()->toBeNull();
+
+	// advance in time
+	testTime()->addSeconds(config('model-locking.lock_duration') + 1);
+
+	expect($testModel->isLocked())->toBeFalse();
+	$lockedAtValue = data_get($originalPropertyReflection->getValue($testModel->refresh()), 'locked_at');
+	expect($lockedAtValue)->not()->toBeNull(); // the new value is not yet saved
+});
+
+it ('can unlock a model with an expired lock automatically and save this to the database', function () {
+	app()->register(ModelLockingServiceProvider::class);
+	$testModel = $this->getTestModel();
+	$testModel->lock($this->getUsers()->first());
+
+	$originalPropertyReflection = (new \ReflectionClass($testModel))->getProperty('original');
+	$originalPropertyReflection->setAccessible(true);
+
+	expect($testModel->isLocked())->toBeTrue();
+	$lockedAtValue = data_get($originalPropertyReflection->getValue($testModel->refresh()), 'locked_at');
+	expect($lockedAtValue)->not()->toBeNull();
+
+	// advance in time
+	testTime()->addSeconds(config('model-locking.lock_duration') + 1);
+
+	expect($testModel->isLocked(true))->toBeFalse();
+	$lockedAtValue = data_get($originalPropertyReflection->getValue($testModel->refresh()), 'locked_at');
+	expect($lockedAtValue)->toBeNull(); // the new value is saved
 });
