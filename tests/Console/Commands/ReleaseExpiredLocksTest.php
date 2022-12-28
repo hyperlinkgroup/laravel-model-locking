@@ -39,8 +39,9 @@ it('does not expire valid locks', function () {
 	$testModel = $this->getTestModel();
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
-	expect(artisan($this, 'locking:release -p ' . __DIR__ . '/../../TestClasses'))
-		->toEqual(Command::SUCCESS);
+	$this->artisan('locking:release -p ' . __DIR__ . '/../../TestClasses')
+		 ->assertExitCode(Command::SUCCESS);
+
 	$testModel->refresh();
 	expect($testModel->isLocked())->toBeTrue();
 });
@@ -56,8 +57,9 @@ it('does release expired locks', function () {
 	// Advance the time behinde the expired date
 	testTime()->addSeconds(config('locking.lock_expiration') + 1);
 
-	expect(artisan($this, 'locking:release -p ' . __DIR__ . '/../../TestClasses'))
-		->toEqual(Command::SUCCESS);
+	$this->artisan('locking:release -p ' . __DIR__ . '/../../TestClasses')
+		 ->assertExitCode(Command::SUCCESS);
+
 	$testModel->refresh();
 	expect($testModel->isLocked())->toBeFalse();
 });
