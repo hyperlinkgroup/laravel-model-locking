@@ -2,6 +2,7 @@
 
 namespace Hylk\Locking\Tests\Console\Commands;
 
+use Carbon\Carbon;
 use Hylk\Locking\Console\Commands\ReleaseExpiredLocks;
 use Hylk\Locking\Providers\ModelLockingServiceProvider;
 use Illuminate\Console\Command;
@@ -54,8 +55,8 @@ it('does release expired locks', function () {
 	$testModel = $this->getTestModel();
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
-	// Advance the time behinde the expired date
-	testTime()->addSeconds(config('locking.lock_expiration') + 1);
+	// Advance the time behind the expired date
+	testTime()->addSeconds(config('model-locking.lock_duration') + 1);
 
 	$this->artisan('locking:release -p ' . __DIR__ . '/../../TestClasses')
 		 ->assertExitCode(Command::SUCCESS);

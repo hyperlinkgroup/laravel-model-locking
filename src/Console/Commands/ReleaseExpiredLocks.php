@@ -36,7 +36,7 @@ class ReleaseExpiredLocks extends Command
 		$this->info('Found ' . $modelClasses->count() . ' models.');
 		foreach($modelClasses as $modelClass) {
 			$modelClass::whereNotNull('locked_by')
-					   ->where('locked_at', '<', now()->subSeconds(config('locking.lock_expiration')))
+					   ->where('locked_at', '<', now()->subSeconds(config('model-locking.lock_duration', 60)))
 					   ->update(['locked_by' => null, 'locked_at' => null]);
 			$this->info('Released expired locks for ' . $modelClass);
 		}
