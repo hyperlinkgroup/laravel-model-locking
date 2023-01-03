@@ -2,14 +2,12 @@
 
 namespace Hylk\Locking\Tests\Console\Commands;
 
-use Carbon\Carbon;
 use Hylk\Locking\Console\Commands\ReleaseExpiredLocks;
 use Hylk\Locking\Providers\ModelLockingServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use function Orchestra\Testbench\artisan;
 use function Spatie\PestPluginTestTime\testTime;
 
 function mockAppPathToFetchTestModel(): void
