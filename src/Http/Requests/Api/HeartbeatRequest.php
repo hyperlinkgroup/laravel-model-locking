@@ -29,14 +29,14 @@ class HeartbeatRequest extends FormRequest
 		return [
 			'heartbeats' => 'present|array',
 			'heartbeats.*.lockable_type' => 'required|string',
-			'heartbeats.*.request_type' => 'required|in:lock,refresh,status',
+			'heartbeats.*.request_type' => 'required|in:lock,refresh,status,unlock',
 			'heartbeats.*' => Rule::forEach(function($heartbeat, $attribute) {
 				return match (data_get($heartbeat, 'request_type')) {
 					'lock' => [
 						'lockable_id' => 'required',
 						new IdOrUuidRule,
 					],
-					'refresh' => [
+					'refresh', 'unlock' => [
 						'lockable_id' => ['required', new IdOrUuidRule],
 						'lock_id'     => 'required|int',
 					],

@@ -101,6 +101,28 @@ it('validates the heartbeats', function () {
 	$request = new HeartbeatRequest($requestValues);
 	expect($request->validate($request->rules()))->toEqual($requestValues);
 
+	// request type unlock
+	$requestValues = ['heartbeats' => [
+		[
+			'lockable_type' => TestModel::class,
+			'request_type' => 'unlock',
+		],
+	]];
+	$request = new HeartbeatRequest($requestValues);
+	try {
+		$request->validate($request->rules());
+	} catch(ValidationException $e) {
+		$this->assertEquals([
+			'heartbeats.0.lockable_id' => ['The heartbeats.0.lockable id field is required.'],
+			'heartbeats.0.lock_id' => ['The heartbeats.0.lock id field is required.'],
+		], $e->errors());
+	}
+
+	data_set($requestValues, 'heartbeats.0.lockable_id', 1);
+	data_set($requestValues, 'heartbeats.0.lock_id', 1);
+	$request = new HeartbeatRequest($requestValues);
+	expect($request->validate($request->rules()))->toEqual($requestValues);
+
 	// request type status
 	$requestValues = ['heartbeats' => [
 		[
