@@ -45,7 +45,7 @@ it('can load the config-file', function () {
 
 it('can lock and unlock a model by a given user', function() {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	expect($testModel->toArray())->toEqual([
 		'id' => 1,
 		'name' => 'Test',
@@ -68,7 +68,7 @@ it('can lock and unlock a model by a given user', function() {
 
 it('can lock and unlock a model by the current user', function() {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
@@ -86,7 +86,7 @@ it('can lock and unlock a model by the current user', function() {
 
 it('can refresh a lock', function() {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
@@ -105,7 +105,7 @@ it('can refresh a lock', function() {
 
 it('cannot unlock a model locked by different user', function() {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	$users = $this->getUsers(2);
 
 	$testModel->lock($users->first());
@@ -114,7 +114,7 @@ it('cannot unlock a model locked by different user', function() {
 
 it('can force unlock a model locked by a different user', function() {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	$user = $this->getUsers()->first();
 
 	$testModel->lock($user);
@@ -125,7 +125,7 @@ it('can force unlock a model locked by a different user', function() {
 
 it ('can unlock a model with an expired lock automatically', function () {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	$testModel->lock($this->getUsers()->first());
 
 	$originalPropertyReflection = (new \ReflectionClass($testModel))->getProperty('original');
@@ -145,7 +145,7 @@ it ('can unlock a model with an expired lock automatically', function () {
 
 it ('can unlock a model with an expired lock automatically and save this to the database', function () {
 	app()->register(ModelLockingServiceProvider::class);
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	$testModel->lock($this->getUsers()->first());
 
 	$originalPropertyReflection = (new \ReflectionClass($testModel))->getProperty('original');

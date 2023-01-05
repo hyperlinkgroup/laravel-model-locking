@@ -27,6 +27,7 @@ it('can find models', function () {
 	expect($commandReflection->getMethod('getModels')->invoke($command)->toArray())
 		->toEqual([
 			'\Hylk\Locking\Tests\TestClasses\Models\TestModel',
+			'\Hylk\Locking\Tests\TestClasses\Models\TestModel2',
 		]);
 });
 
@@ -35,7 +36,7 @@ it('does not expire valid locks', function () {
 	app()->useAppPath(__DIR__ . '/../../TestClasses');
 	app()->setBasePath(__DIR__ . '/../../TestClasses');
 
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
 	$this->artisan('locking:release -p ' . __DIR__ . '/../../TestClasses')
@@ -50,7 +51,7 @@ it('does release expired locks', function () {
 	app()->useAppPath(__DIR__ . '/../../TestClasses');
 	app()->setBasePath(__DIR__ . '/../../TestClasses');
 
-	$testModel = $this->getTestModel();
+	$testModel = $this->getTestModel()->first();
 	Auth::setUser($this->getUsers()->first());
 	$testModel->lock();
 	// Advance the time behind the expired date

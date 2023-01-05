@@ -1,5 +1,5 @@
 {
-  "name": "hyperlinkgroup/laravel-model-locking",
+  "name": "hylk/laravel-model-locking",
   "description": "Wordpress like locking feature for Laravel-Models.",
   "type": "library",
   "license": "MIT",

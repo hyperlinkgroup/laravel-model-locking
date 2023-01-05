@@ -125,7 +125,7 @@ trait IsLockable
 	{
 		$userId = $this->lockingUserIdentifier($user);
 
-		return $this->releaseLockIfExpired($saveOnRelease)->locked_by === $userId;
+		return (string) $this->releaseLockIfExpired($saveOnRelease)->locked_by === (string) $userId;
 	}
 
 	/**
