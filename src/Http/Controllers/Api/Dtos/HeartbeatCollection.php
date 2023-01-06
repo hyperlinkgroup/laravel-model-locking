@@ -4,7 +4,9 @@ namespace Hylk\Locking\Http\Controllers\Api\Dtos;
 
 use Hylk\Locking\Models\Concerns\IsLockable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class HeartbeatCollection extends Collection
 {
@@ -87,10 +89,27 @@ class HeartbeatCollection extends Collection
 
 	public function modelStates(): Collection
 	{
+		// get the states
 		$this->each(function (Heartbeat $heartbeat) use (&$responseData) {
 			$responseData = $responseData ? $responseData->merge($heartbeat->modelStates()) : $heartbeat->modelStates();
 		});
 
-		return $responseData;
+		// collect the users
+		/** @var class-string<User> $userModelClass */
+		$userModelClass = config('auth.providers.users.model', User::class);
+		$users = $userModelClass::find(data_get($responseData, '*.locked_by', []));
+
+		// mixin the user info and return
+		return $responseData->map(function (array $responsePerHeartbeat) use ($users) {
+			/** @var User $user */
+			$user = $users->find($responsePerHeartbeat['locked_by']) ?? new User();
+			$responsePerHeartbeat['locked_by'] = [
+				'id' => $user->getKey(),
+				'name' => $user->name,
+				'is_current_user' => ($user->getKey() === Auth::id())
+			];
+
+			return $responsePerHeartbeat;
+		});
 	}
 }

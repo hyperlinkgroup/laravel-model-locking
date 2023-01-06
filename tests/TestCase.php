@@ -2,7 +2,6 @@
 
 namespace Hylk\Locking\Tests;
 
-use Faker\Guesser\Name;
 use Hylk\Locking\Tests\TestClasses\Models\TestModel;
 use Hylk\Locking\Tests\TestClasses\Models\TestModel2;
 use Illuminate\Database\Eloquent\Collection;
@@ -80,12 +79,16 @@ class TestCase extends OrchestraTestCase
 	{
 		Schema::create('users', function (Blueprint $table) {
 			$table->id();
+			$table->string('name')->nullable();
 			$table->timestamps();
 		});
 
 		$users = new Collection();
 		for ($i = 1; $i <= $number; $i++) {
-			$users->add((config('auth.providers.users.model',  User::class))::create());
+			$user = new (config('auth.providers.users.model',  User::class))();
+			$user->name = 'TestUser';
+			$user->save();
+			$users->add($user);
 		}
 
 		return $users;

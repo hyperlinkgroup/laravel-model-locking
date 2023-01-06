@@ -26,7 +26,7 @@ it ('can handle a single heartbeat', function () {
 	/** @var JsonResponse $response */
 	$response = call_user_func(new HeartbeatController(), new HeartbeatRequest($requestValues));
 	expect($response->getStatusCode())->toBe(200);
-	expect($response->getContent())->toContain(',"locked_by":1}]}');
+	expect($response->getContent())->toContain(',"locked_by":{"id":1,"name":"TestUser","is_current_user":true}}]}');
 	expect($testModel->refresh()->isLocked())->toBeTrue();
 });
 
@@ -44,7 +44,7 @@ it ('can handle a multiple heartbeats for a model', function () {
 	/** @var JsonResponse $response */
 	$response = call_user_func(new HeartbeatController(), new HeartbeatRequest($requestValues));
 	expect($response->getStatusCode())->toBe(200);
-	expect($response->getContent())->toContain(',"locked_by":1}]}');
+	expect($response->getContent())->toContain(',"locked_by":{"id":1,"name":"TestUser","is_current_user":true}}]}');
 	$testModels->each(function (TestModel $testModel) {
 		expect($testModel->refresh()->isLocked())->toBeTrue();
 	});
@@ -97,7 +97,7 @@ it ('can handle different models at once', function () {
 	/** @var JsonResponse $response */
 	$response = call_user_func(new HeartbeatController(), new HeartbeatRequest($requestValues));
 	expect($response->getStatusCode())->toBe(200);
-	expect($response->getContent())->toContain(',"locked_by":1}]}', json_encode(TestModel::class), json_encode(TestModel2::class));
+	expect($response->getContent())->toContain(',"locked_by":{"id":1,"name":"TestUser","is_current_user":true}}]}', json_encode(TestModel::class), json_encode(TestModel2::class));
 	expect($testModel->refresh()->isLocked())->toBeTrue();
 	expect($testModel2->refresh()->isLocked())->toBeTrue();
 });
@@ -142,5 +142,5 @@ it ('can request a lock-state', function () {
 	/** @var JsonResponse $response */
 	$response = call_user_func(new HeartbeatController(), new HeartbeatRequest($requestValues));
 	expect($response->getStatusCode())->toBe(200);
-	expect($response->getContent())->toContain(',"locked_by":"1"}]}');
+	expect($response->getContent())->toContain(',"locked_by":{"id":1,"name":"TestUser","is_current_user":true}}]}');
 });

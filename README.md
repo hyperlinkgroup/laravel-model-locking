@@ -17,6 +17,12 @@ You can publish the config file with:
 php artisan vendor:publish --provider="Hylk\Locking\Providers\ModelLockingServiceProvider" --tag="model-locking-config"
 ```
 
+You can publish the translation files with:
+
+```bash
+php artisan vendor:publish --provider="Hylk\Locking\Providers\ModelLockingServiceProvider" --tag="model-locking-config"
+```
+
 ## Usage
 
 ### Setting up your models
