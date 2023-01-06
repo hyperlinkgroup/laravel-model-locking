@@ -1,0 +1,41 @@
+<template>
+	<span v-if="false"></span>
+</template>
+
+<script>
+
+export default {
+	name: 'HeartbeatListener',
+
+	props: {
+		modelClass: {
+			type: String,
+			required: true,
+		},
+		modelId: {
+			type: [Number, String],
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			identifier: this.heartbeatManager.generateId(10),
+		};
+	},
+
+	emits: ['locked', 'unlocked'],
+
+	mounted() {
+		this.heartbeatManager.registerListener(this.modelClass, this.modelId, this.identifier, lockData => {
+			if (lockData.locked_by.name) return this.$emit('locked', lockData);
+
+			return this.$emit('unlocked', lockData);
+		});
+	},
+
+	beforeUnmount() {
+		this.heartbeatManager.removeListener(this.identifier);
+	},
+};
+</script>

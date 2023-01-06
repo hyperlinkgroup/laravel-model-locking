@@ -1,6 +1,6 @@
 <?php
 
-namespace Hylk\Locking\Providers;
+namespace Hylk\Locking;
 
 use Hylk\Locking\Console\Commands\ReleaseExpiredLocks;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,9 +17,13 @@ class ModelLockingServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
-		if ($this->app->runningInConsole()) $this->registerCommands();
+		if ($this->app->runningInConsole()) {
+			$this->registerCommands();
+			$this->registerVueComponents();
+		}
 
 		$this->registerTranslations();
+		$this->registerRoutes();
 	}
 
 	protected function registerCommands(): void
@@ -49,7 +53,7 @@ class ModelLockingServiceProvider extends ServiceProvider
 
 		$this->publishes([
 			__DIR__ . '/../lang' => $this->app->langPath('vendor/model-locking'),
-		]);
+		], 'model-locking-translations');
 	}
 
 	protected function registerConfig(): void
@@ -57,7 +61,19 @@ class ModelLockingServiceProvider extends ServiceProvider
 		$this->mergeConfigFrom(__DIR__ . '/../../config/model-locking.php', 'model-locking');
 
 		$this->publishes([
-			__DIR__ . '/../../config/model-locking.php' => 'model-locking-config',
-		]);
+			__DIR__ . '/../../config/model-locking.php' => config_path('model-locking'),
+		], 'model-locking-config');
+	}
+
+	protected function registerVueComponents(): void
+	{
+		$this->publishes([
+			__DIR__ . '/../../resources/js' => resource_path('js/vendor/hylk/laravel-model-locking'),
+		], 'model-locking-vue');
+	}
+
+	protected function registerRoutes(): void
+	{
+		$this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
 	}
 }

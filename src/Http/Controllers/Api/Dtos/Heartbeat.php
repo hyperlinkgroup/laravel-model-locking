@@ -26,7 +26,7 @@ class Heartbeat
 		$this->request_type = data_get($attributes, 'request_type');
 		$this->lock_id = data_get($attributes, 'lock_id');
 
-		$ids = [data_get($attributes, 'lockable_id')];
+		$ids = array_filter([data_get($attributes, 'lockable_id')]);
 		if (!count($ids)) $ids = data_get($attributes, 'lockable_ids', []);
 		$this->lockable_ids = $ids;
 

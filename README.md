@@ -14,13 +14,19 @@ composer require hyperlinkgroup/laravel-model-locking
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Hylk\Locking\Providers\ModelLockingServiceProvider" --tag="model-locking-config"
+php artisan vendor:publish --provider="Hylk\Locking\ModelLockingServiceProvider" --tag="model-locking-config"
 ```
 
 You can publish the translation files with:
 
 ```bash
-php artisan vendor:publish --provider="Hylk\Locking\Providers\ModelLockingServiceProvider" --tag="model-locking-config"
+php artisan vendor:publish --provider="Hylk\Locking\ModelLockingServiceProvider" --tag="model-locking-translations"
+```
+
+You can publish thevue-components via:
+
+```bash
+php artisan vendor:publish --provider="Hylk\Locking\ModelLockingServiceProvider" --tag="model-locking-vue"
 ```
 
 ## Usage
@@ -30,7 +36,7 @@ Within a model just use the `IsLockable`-Trait.
 
 ```php
 class Post extends Model {
-    use \Hyperlinkgroup\ModelLocking\IsLockable;
+    use \Hylk\ModelLocking\IsLockable;
     
     ...
 }
@@ -74,3 +80,5 @@ class PostController {
 
 To make sure no locks are missed you should use the `locking:release` Artisan command in your scheduler.
 Additionally, you should publish the config and set the lock duration to around 15 minutes.
+
+### Model-Locking by heartbeat (Vue)

@@ -5,7 +5,7 @@ namespace Hylk\Locking\Tests;
 use Carbon\Carbon;
 use Hylk\Locking\Exceptions\InvalidUserException;
 use Illuminate\Database\Schema\Blueprint;
-use Hylk\Locking\Providers\ModelLockingServiceProvider;
+use Hylk\Locking\ModelLockingServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use function Spatie\PestPluginTestTime\testTime;
 

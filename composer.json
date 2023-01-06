@@ -26,7 +26,7 @@
   "extra": {
 	"laravel": {
 	  "providers": [
-		"Hylk\\Locking\\Providers\\ModelLockingServiceProvider"
+		"Hylk\\Locking\\ModelLockingServiceProvider"
 	  ]
 	}
   },

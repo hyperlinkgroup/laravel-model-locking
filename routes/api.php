@@ -1,8 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Hylk\Locking\Http\Api\Controllers\HeartbeatController;
+use Hylk\Locking\Http\Controllers\Api\HeartbeatController;
 
-Route::group(['prefix' => 'locking', 'as' => 'locking.'], function () {
-	Route::get('heartbeat', HeartbeatController::class)->name('heartbeat');
+Route::group([
+	'prefix' => 'api/locking',
+	'as' => 'api.locking.',
+	'middleware' => config('model-locking.middleware', ['api'])
+], function () {
+	Route::post('heartbeat', HeartbeatController::class)->name('heartbeat');
 });
