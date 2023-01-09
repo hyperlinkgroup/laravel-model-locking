@@ -5,6 +5,12 @@
 <script>
 
 export default {
+	/*
+	Do not change this file directly.
+	It's published by the hylk/laravel-model-locking package.
+
+	Checkout and forge the package, change it there an request an update by PR.
+ */
 	name: 'HeartbeatLockRefresher',
 
 	props: {
