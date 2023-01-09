@@ -3,7 +3,6 @@
 </template>
 
 <script>
-
 export default {
 	name: 'HeartbeatListener',
 
@@ -34,7 +33,7 @@ export default {
 		});
 	},
 
-	beforeUnmount() {
+	beforeDestroy() {
 		this.heartbeatManager.removeListener(this.identifier);
 	},
 };

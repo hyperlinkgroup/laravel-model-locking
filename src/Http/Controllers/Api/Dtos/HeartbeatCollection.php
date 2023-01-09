@@ -2,6 +2,7 @@
 
 namespace Hylk\Locking\Http\Controllers\Api\Dtos;
 
+use Hylk\Locking\Exceptions\ModelIsLockedException;
 use Hylk\Locking\Models\Concerns\IsLockable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
@@ -81,7 +82,11 @@ class HeartbeatCollection extends Collection
 
 		// handle the tasks
 		$this->each(function (Heartbeat $heartbeat) {
-			$heartbeat->handle();
+			try {
+				$heartbeat->handle();
+			} catch (ModelIsLockedException $e) {
+				// we ignore if the model is locked
+			}
 		});
 
 		return $this;

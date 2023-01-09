@@ -7,6 +7,7 @@ use Hylk\Locking\Exceptions\InvalidUserException;
 use Hylk\Locking\Exceptions\ModelIsLockedException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
  * @property-read Carbon|null $locked_at
  * @property-read bool $is_locked
  * @property-read bool $is_unlocked
+ * @property-read Authenticatable $isLockedByUser
  */
 trait IsLockable
 {
@@ -126,6 +128,13 @@ trait IsLockable
 		$userId = $this->lockingUserIdentifier($user);
 
 		return (string) $this->releaseLockIfExpired($saveOnRelease)->locked_by === (string) $userId;
+	}
+	
+	public function isLockedByUser(): BelongsTo
+	{
+		$emptyUser = new (config('auth.providers.users.model',  User::class))();
+
+		return $this->belongsTo($emptyUser::class, 'locked_by', $emptyUser->getKeyName());
 	}
 
 	/**
