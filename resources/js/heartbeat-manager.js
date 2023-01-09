@@ -105,7 +105,7 @@ const HeartbeatManager = {
 					if (removeListener) this.removeListener(listener.identifier);
 
 					this.HeartbeatEventBus.$emit('state_refreshed_' + listener.identifier, heartbeatData);
-					this.HeartbeatEventBus.$off('state_refreshed_' + listener.identifier);
+					if (removeListener) this.HeartbeatEventBus.$off('state_refreshed_' + listener.identifier);
 				}
 			});
 		});
