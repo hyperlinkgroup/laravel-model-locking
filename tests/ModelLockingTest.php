@@ -5,7 +5,7 @@ namespace Hylk\Locking\Tests;
 use Carbon\Carbon;
 use Hylk\Locking\Exceptions\InvalidUserException;
 use Illuminate\Database\Schema\Blueprint;
-use Hylk\Locking\Providers\ModelLockingServiceProvider;
+use Hylk\Locking\ModelLockingServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use function Spatie\PestPluginTestTime\testTime;
 
@@ -38,8 +38,9 @@ it('can load the config-file', function () {
 		'lock_duration' => 70,
 		'intervals' => [
 			'heartbeat_refresh' => 60,
-			'heartbeat_status' => 15,
+			'heartbeat_status' => 30,
 		],
+		'middleware' => ['api'],
 	]);
 });
 

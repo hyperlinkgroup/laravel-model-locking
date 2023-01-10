@@ -3,7 +3,7 @@
 namespace Hylk\Locking\Tests\Console\Commands;
 
 use Hylk\Locking\Console\Commands\ReleaseExpiredLocks;
-use Hylk\Locking\Providers\ModelLockingServiceProvider;
+use Hylk\Locking\ModelLockingServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\App;
