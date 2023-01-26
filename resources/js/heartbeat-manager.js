@@ -240,6 +240,8 @@ export default {
 				return result;
 			},
 			triggerHeartbeat() {
+				if (!HeartbeatManager.hasHeartbeats()) return;
+
 				HeartbeatManager.triggerBeat();
 			},
 		};
