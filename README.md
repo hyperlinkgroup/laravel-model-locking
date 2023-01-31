@@ -1,6 +1,3 @@
-> **Warning**
-> This Package is still work in progress!
-
 # Laravel Model Locking by [HYPERLINK GROUP](https://github.com/orgs/hyperlinkgroup)
 
 ## Installation
@@ -8,7 +5,7 @@
 You can install the package via composer:
 
 ```bash
-composer require hylk/laravel-model-locking
+composer require hyperlink/laravel-model-locking
 ```
 
 You can publish the config file with:
