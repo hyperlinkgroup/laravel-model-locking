@@ -37,9 +37,14 @@ const HeartbeatManager = {
 		if (this.hasHeartbeats()) this.scheduleBeat();
 	},
 
-	triggerBeat(scheduleBeat = true) {
-		if (process.env.MIX_HEARTBEAT_ENABLED !== 'true') return;
+	isHeartbeatDisabled() {
+		process.env.MIX_HEARTBEAT_ENABLED ??= 'true';
 
+		return process.env.MIX_HEARTBEAT_ENABLED !== 'true';
+	},
+
+	triggerBeat(scheduleBeat = true) {
+		if (this.isHeartbeatDisabled()) return;
 		this.beat.counter = 1;
 		if (scheduleBeat) {
 			clearTimeout(this.beat.handle);
@@ -61,7 +66,7 @@ const HeartbeatManager = {
 	scheduleBeat() {
 		if (!this.hasHeartbeats()) return;
 		if (this.beat.handle) return;
-		if (process.env.MIX_HEARTBEAT_ENABLED !== 'true') return;
+		if (this.isHeartbeatDisabled()) return;
 
 		const heartbeatRequest = () => {
 			++this.beat.counter;
