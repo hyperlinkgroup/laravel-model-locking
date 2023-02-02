@@ -32,6 +32,13 @@ trait IsLockable
 		$this->appends[] = 'locked_at';
 	}
 
+	public static function lockableIdField(): string
+	{
+		if (property_exists(self::class, 'lockableIdField')) return self::lockableIdField;
+
+		return 'id';
+	}
+
 	/**
 	 * Locks model.
 	 *
@@ -129,7 +136,7 @@ trait IsLockable
 
 		return (string) $this->releaseLockIfExpired($saveOnRelease)->locked_by === (string) $userId;
 	}
-	
+
 	public function isLockedByUser(): BelongsTo
 	{
 		$emptyUser = new (config('auth.providers.users.model',  User::class))();

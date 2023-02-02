@@ -102,7 +102,7 @@ class Heartbeat
 		return $this->lockables()->map(function($lockable) {
 			/** @var Model&IsLockable $lockable */
 			return [
-				'lockable_id' => $lockable->getKey(),
+				'lockable_id' => $lockable->{$lockable::lockableIdField()},
 				'lockable_type' => $lockable::class,
 				'locked_at' => $lockable->locked_at,
 				'locked_by' => $lockable->locked_by,

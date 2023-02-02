@@ -38,6 +38,8 @@ const HeartbeatManager = {
 	},
 
 	triggerBeat(scheduleBeat = true) {
+		if (process.env.MIX_HEARTBEAT_ENABLED !== 'true') return;
+
 		this.beat.counter = 1;
 		if (scheduleBeat) {
 			clearTimeout(this.beat.handle);

@@ -44,12 +44,12 @@ class HeartbeatCollection extends Collection
 		if ($modelCollection = data_get($this->models, $modelClass)) {
 			$emptyModel = new $modelClass();
 			/** @var \Illuminate\Database\Eloquent\Collection $models */
-			$models = $modelCollection->whereIn($emptyModel->getKeyName(), $ids);
+			$models = $modelCollection->whereIn($modelClass::$lockableIdField, $ids);
 
 			if ($models->count()) return $models;
 		}
 
-		return $modelClass::find($ids);
+		return $modelClass::whereIn($modelClass::$lockableIdField, $ids)->get();
 	}
 
 	/**
@@ -77,7 +77,7 @@ class HeartbeatCollection extends Collection
 		 * @var  array $ids
 		 */
 		foreach($modelsToFetch as $modelClass => $ids) {
-			$this->models[$modelClass] = $modelClass::find($ids);
+			$this->models[$modelClass] = $modelClass::whereIn($modelClass::$idField, $ids)->get();
 		}
 
 		// handle the tasks

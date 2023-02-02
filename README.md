@@ -130,6 +130,7 @@ The more advanced approach is to handle the locks via a heartbeat. This only wor
 | `HEARTBEAT_LOCK_DURATION` | 70 | The time in seconds a model is locked. |
 | `MIX_HEARTBEAT_REFRESH` | 60 | The time in seconds between the heartbeats. Should be a multiple of the `MIX_HEARTBEAT_STATUS`-interval. |
 | `MIX_HEARTBEAT_STATUS` | 30 | The time in seconds between the heartbeats for status-request (index-Listener). |
+| `MIX_HEARTBEAT_ENABLED` | true | Activates or deactivates the heartbeats. |
 
 ### config
 Beside the environment variables, there is a `middleware` key to determine the middleware(s) used by the heartbeat-route. Default it's set to `api`.
