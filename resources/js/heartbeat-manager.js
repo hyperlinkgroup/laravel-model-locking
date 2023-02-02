@@ -38,9 +38,9 @@ const HeartbeatManager = {
 	},
 
 	isHeartbeatDisabled() {
-		process.env.MIX_HEARTBEAT_ENABLED ??= 'true';
+		const enabled = process.env.MIX_HEARTBEAT_ENABLED ? process.env.MIX_HEARTBEAT_ENABLED : 'true';
 
-		return process.env.MIX_HEARTBEAT_ENABLED !== 'true';
+		return enabled !== 'true';
 	},
 
 	triggerBeat(scheduleBeat = true) {
