@@ -61,6 +61,7 @@ const HeartbeatManager = {
 	scheduleBeat() {
 		if (!this.hasHeartbeats()) return;
 		if (this.beat.handle) return;
+		if (process.env.MIX_HEARTBEAT_ENABLED !== 'true') return;
 
 		const heartbeatRequest = () => {
 			++this.beat.counter;
