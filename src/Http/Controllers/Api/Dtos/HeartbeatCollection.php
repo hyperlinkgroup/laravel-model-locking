@@ -94,6 +94,7 @@ class HeartbeatCollection extends Collection
 
 	public function modelStates(): Collection
 	{
+		$responseData = new Collection();
 		// get the states
 		$this->each(function (Heartbeat $heartbeat) use (&$responseData) {
 			$responseData = $responseData ? $responseData->merge($heartbeat->modelStates()) : $heartbeat->modelStates();
