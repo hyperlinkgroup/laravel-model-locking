@@ -57,7 +57,7 @@ trait IsLockable
 		$this->attributes['locked_by'] = $this->lockingUserIdentifier($user);
 		$this->attributes['locked_at'] = Carbon::now();
 
-		if ($save) $this->save();
+		if ($save) $this->saveQuietly();
 
 		return $this;
 	}
@@ -93,7 +93,7 @@ trait IsLockable
 		$this->attributes['locked_by'] = null;
 		$this->attributes['locked_at'] = null;
 
-		if ($save) $this->save();
+		if ($save) $this->saveQuietly();
 
 		return $this;
 	}
