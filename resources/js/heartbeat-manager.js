@@ -55,6 +55,13 @@ const HeartbeatManager = {
 		return axios.post('/api/locking/heartbeat', this.heartbeatData())
 			.then(response => this.handleHeartbeatResponse(response.data))
 			.catch(error => {
+				// remove the listeners if an error occured
+				for (const [modelClass, listeners] of Object.entries(this.listeners)) {
+					listeners.forEach(listener => {
+						this.HeartbeatEventBus.$off(`${modelClass}.${listener}`);
+					});
+				}
+
 				throw new Error(error);
 			});
 	},
