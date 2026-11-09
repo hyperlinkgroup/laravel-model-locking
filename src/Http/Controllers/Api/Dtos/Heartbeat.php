@@ -45,7 +45,7 @@ class Heartbeat
 	 *
 	 * @return Collection<Model&IsLockable>|null
 	 */
-	public function lockables(Collection $lockable = null): ?Collection
+	public function lockables(?Collection $lockable = null): ?Collection
 	{
 		if (!$this->lockables) $this->lockables = $lockable;
 		if (!$this->lockables && $this->collection()) {
