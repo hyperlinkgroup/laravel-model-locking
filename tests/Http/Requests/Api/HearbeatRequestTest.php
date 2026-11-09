@@ -21,7 +21,7 @@ it('requires the heartbeats-array', function() {
 		$request->validate($request->rules());
 	} catch(ValidationException $e) {
 		$this->assertEquals([
-			'heartbeats' => ['The heartbeats must be an array.'],
+			'heartbeats' => ['The heartbeats field must be an array.'],
 		], $e->errors());
 	}
 
@@ -141,7 +141,7 @@ it('validates the heartbeats', function () {
 		$request->validate($request->rules());
 	} catch(ValidationException $e) {
 		$this->assertEquals([
-			'heartbeats.0.lockable_ids' => ['The heartbeats.0.lockable ids must be an array.'],
+			'heartbeats.0.lockable_ids' => ['The heartbeats.0.lockable ids field must be an array.'],
 		], $e->errors());
 	}
 

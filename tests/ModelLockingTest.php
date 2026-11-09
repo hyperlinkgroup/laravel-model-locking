@@ -7,12 +7,13 @@ use Hylk\Locking\Exceptions\InvalidUserException;
 use Illuminate\Database\Schema\Blueprint;
 use Hylk\Locking\ModelLockingServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use function Spatie\PestPluginTestTime\testTime;
 
 it('can extend the blueprint for migrations', function () {
 	app()->register(ModelLockingServiceProvider::class);
 
-	$blueprint = new Blueprint('test');
+	$blueprint = new Blueprint(Schema::getConnection(), 'test');
 	$blueprint->lockfields();
 	expect($blueprint->getAddedColumns())->toHaveCount(2);
 	expect($blueprint->getAddedColumns()[0]->toArray())->toEqual([
@@ -22,6 +23,8 @@ it('can extend the blueprint for migrations', function () {
 		'unsigned' => true,
 		'nullable' => true,
 		'default' => null,
+		'table' => 'users',
+		'referencesModelColumn' => 'id',
 	]);
 	expect($blueprint->getAddedColumns()[1]->toArray())->toEqual([
 		'type' => 'timestamp',
