@@ -1,4 +1,10 @@
-# Laravel Model Locking by [HYPERLINK GROUP](https://github.com/orgs/hyperlinkgroup)
+# Laravel Model Locking for Laravel
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/hyperlink/laravel-model-locking.svg?style=flat-square)](https://packagist.org/packages/hyperlink/laravel-model-locking)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/hyperlinkgroup/laravel-model-locking/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/hyperlinkgroup/laravel-model-locking/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/hyperlink/laravel-model-locking.svg?style=flat-square)](https://packagist.org/packages/hyperlink/laravel-model-locking)
+
+WordPress-like edit locking for Laravel Eloquent models. A model is locked for the user editing it, a heartbeat from the frontend keeps the lock alive as long as the model is open. Expired locks are released automatically.
 
 ## Installation
 
